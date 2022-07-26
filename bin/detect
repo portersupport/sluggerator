@@ -12,12 +12,12 @@ else
 fi
 
 if [ -f "$APP_DIR/Sluggerator" ]; then
-  echo "Sluggerator"
+  echo "Sluggerator will use your Sluggerator file"
   exit 0
 fi
 
 if [ -f "$APP_DIR/.slugignore" ]; then
-  echo "Sluggerator in .slugignore mode"
+  echo "Sluggerator will use your .slugignore file"
   exit 0
 fi
 
