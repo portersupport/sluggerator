@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+if [ -z "$CNB_STACK_ID" ]; then
+  # v2 API
+  APP_DIR=$1
+else
+  PLATFORM_DIR=$1
+  PLAN=$2
+  # working is the cwd now
+  # v3 API
+  APP_DIR=$(pwd)
+fi
+
+if [ -f "$APP_DIR/Sluggerator" ]; then
+  echo "Sluggerator"
+  exit 0
+else
+  exit 100
+fi
