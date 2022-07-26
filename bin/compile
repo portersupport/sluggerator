@@ -12,6 +12,10 @@ CACHE_DIR=$2
 #BIN_DIR=$(cd $(dirname $0); pwd)
 #BUILDPACK_DIR=$(dirname $BIN_DIR)
 
+log () {
+  echo "       $1"
+}
+
 file="$BUILD_DIR/Sluggerator"
 
 if [ ! -f "$file" ]; then
@@ -19,19 +23,20 @@ if [ ! -f "$file" ]; then
 fi
 
 if [ ! -f "$file" ]; then
-  echo "I don't know how you got here, but exiting because we can't find a suitable Sluggerator or .slugignore file!"
-  exit 0
+  log "I don't know how you got here, but exiting because we can't find a suitable Sluggerator or .slugignore file!"
+  exit 100
 fi
 
+
 #echo "BUILD_DIR is $BUILD_DIR"
-echo "Sluggerating with $file"
+log "Sluggerating with $file"
 
 killfile () {
   if [[ -z "$DRY_RUN" ]]; then
 #    echo "REAL: rm -f $1"
     rm -fv $1
   else
-    echo "DRY: rm -f $1"
+    log "DRY: rm -f $1"
   fi
 }
 
@@ -40,7 +45,7 @@ killdir () {
 #    echo "REAL: rm -rf $1"
     rm -rfv $1
   else
-    echo "DRY: rm -rf $1"
+    log "DRY: rm -rf $1"
   fi
 }
 
@@ -48,7 +53,7 @@ slugitout () {
   sluggy="$(ls -1d $1 2>/dev/null || echo '')"
 
     if [[ -z "$sluggy" ]]; then
-      echo "WARN: No files matching: $1"
+      log "WARN: No files matching: $1"
       continue
     fi
 
@@ -66,7 +71,7 @@ slugitout () {
       elif [[ -d "$line_item" ]]; then
         killdir $line_item
       else
-        echo "Unknown thing to sluggerate: $line"
+        log "Unknown thing to sluggerate: $line"
       fi
     done < $tf
 }
