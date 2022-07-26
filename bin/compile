@@ -6,7 +6,7 @@ BUILD_DIR=$1
 
 # We get passed these other things, but we don't really need them.
 
-#CACHE_DIR=$2
+CACHE_DIR=$2
 #ENV_DIR=$3
 
 #BIN_DIR=$(cd $(dirname $0); pwd)
@@ -44,6 +44,33 @@ killdir () {
   fi
 }
 
+slugitout () {
+  sluggy="$(ls -1d $1 2>/dev/null || echo '')"
+
+    if [[ -z "$sluggy" ]]; then
+      echo "WARN: No files matching: $1"
+      continue
+    fi
+
+  #  echo "sluggy is $sluggy"
+
+    tf="$(mktemp)"
+
+    echo "$sluggy" > $tf
+
+    while read -r line_item; do
+  #    echo "line_item is $line_item"
+
+      if [[ -f "$line_item" ]]; then
+        killfile $line_item
+      elif [[ -d "$line_item" ]]; then
+        killdir $line_item
+      else
+        echo "Unknown thing to sluggerate: $line"
+      fi
+    done < $tf
+}
+
 while read -r line; do
 #  echo "Trying to sluggerate $line"
 
@@ -52,28 +79,11 @@ while read -r line; do
     continue
   fi
 
-  sluggy="$(ls -1d $line 2>/dev/null || echo '')"
+  slugitout "$BUILD_DIR/$line"
 
-  if [[ -z "$sluggy" ]]; then
-    echo "WARN: No files matching: $line"
-    continue
+  if [[ ! -z "$CACHE_DIR" ]]; then
+    slugitout "$CACHE_DIR/$line"
   fi
-
-#  echo "sluggy is $sluggy"
-
-  tf="$(mktemp)"
-
-  echo "$sluggy" > $tf
-
-  while read -r line_item; do
-#    echo "line_item is $line_item"
-
-    if [[ -f "$line_item" ]]; then
-      killfile $line_item
-    elif [[ -d "$line_item" ]]; then
-      killdir $line_item
-    else
-      echo "Unknown thing to sluggerate: $line"
-    fi
-  done < $tf
 done < $file
+
+(du -sh vendor/bundle/ruby/*/gems/* | sort -h) || echo "du failed!"
