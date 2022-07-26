@@ -93,6 +93,10 @@ done < $file
 
 GEMROOT="$BUILD_DIR/vendor/bundle/ruby/*/gems/"
 
-echo "Large Gems Files:"
-du -ah --threshold=1M $GEMROOT/* | sort -h
+echo "Large Gems:"
+du -sh --threshold=10M $GEMROOT/* | sort -h
+echo "WHERETZ:"
+du -ah --threshold=1M $GEMROOT/wheretz*/data/*
+echo "MINIRACER:"
+du -ah --threshold=1M $GEMROOT/mini_racer*
 
