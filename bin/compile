@@ -14,20 +14,45 @@ BUILD_DIR=$1
 
 file="$BUILD_DIR/Sluggerator"
 
+if [ ! -f "$file" ]; then
+  file="$BUILD_DIR/.slugignore"
+fi
+
+if [ ! -f "$file" ]; then
+  echo "I don't know how you got here, but exiting because we can't find a suitable Sluggerator or .slugignore file!"
+  exit 0
+fi
+
+#echo "BUILD_DIR is $BUILD_DIR"
+echo "Sluggerating with $file"
+
 while read -r line; do
-  echo "Trying to sluggerate $line"
+#  echo "Trying to sluggerate $line"
+
+  if [[ $line =~ ^#.*$ ]] || [[ -z "$line" ]]; then
+#    echo "Skipping $line"
+    continue
+  fi
+
+  sluggy="$(ls -1d $line)"
+
+#  echo "sluggy is $sluggy"
+
+  tf="$(mktemp)"
+
+  echo "$sluggy" > $tf
 
   while read -r line_item; do
-    if [[ -f "$line" ]]; then
-      echo "gonna rm $line"
-      rm "$line"
+    echo "line_item is $line_item"
+
+    if [[ -f "$line_item" ]]; then
+#      echo "gonna rm $line_item"
+      rm "$line_item"
+    elif [[ -d "$line_item" ]]; then
+#      echo "gonna rm -rf $line_item"
+      rm -rf "$line_item"
     else
-      if [[ -d "$line" ]]; then
-        echo "gonna rm -rf $line"
-        rm -rf "$line"
-      else
-        echo "Unknown thing to sluggerate: $line"
-      fi
+      echo "Unknown thing to sluggerate: $line"
     fi
-  done < $(ls --color=never -1p $line)
+  done < $tf
 done < $file
