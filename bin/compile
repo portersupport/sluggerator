@@ -2,15 +2,15 @@
 
 set -e
 
-# The actual compilation code lives in `bin/support/ruby_compile`. This file instead
-# bootstraps the ruby needed and then executes `bin/support/ruby_compile`
-
 BUILD_DIR=$1
-CACHE_DIR=$2
-ENV_DIR=$3
 
-BIN_DIR=$(cd $(dirname $0); pwd)
-BUILDPACK_DIR=$(dirname $BIN_DIR)
+# We get passed these other things, but we don't really need them.
+
+#CACHE_DIR=$2
+#ENV_DIR=$3
+
+#BIN_DIR=$(cd $(dirname $0); pwd)
+#BUILDPACK_DIR=$(dirname $BIN_DIR)
 
 file="$BUILD_DIR/Sluggerator"
 
