@@ -52,7 +52,7 @@ while read -r line; do
     continue
   fi
 
-  sluggy="$(ls -1d $line)"
+  sluggy="$(ls -1d $line 2>/dev/null || echo '')"
 
 #  echo "sluggy is $sluggy"
 
