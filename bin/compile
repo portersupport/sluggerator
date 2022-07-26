@@ -91,4 +91,4 @@ while read -r line; do
   fi
 done < $file
 
-(du -sh vendor/bundle/ruby/*/gems/* | sort -h) || echo "du failed!"
+(du -sh $BUILD_DIR/vendor/bundle/ruby/*/gems/* | sort -h) || echo "du failed!"
