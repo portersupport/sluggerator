@@ -26,10 +26,28 @@ fi
 #echo "BUILD_DIR is $BUILD_DIR"
 echo "Sluggerating with $file"
 
+killfile () {
+  if [[ -z "$DRY_RUN" ]]; then
+    echo "REAL: rm -f $1"
+    rm -f $1
+  else
+    echo "DRY: rm -f $1"
+  fi
+}
+
+killdir () {
+  if [[ -z "$DRY_RUN" ]]; then
+#    echo "REAL: rm -rf $1"
+    rm -rf $1
+  else
+    echo "DRY: rm -rf $1"
+  fi
+}
+
 while read -r line; do
 #  echo "Trying to sluggerate $line"
 
-  if [[ $line =~ ^#.*$ ]] || [[ -z "$line" ]]; then
+  if [[ $line =~ ^\s*#.*$ ]] || [[ -z "$line" ]]; then
 #    echo "Skipping $line"
     continue
   fi
@@ -43,14 +61,12 @@ while read -r line; do
   echo "$sluggy" > $tf
 
   while read -r line_item; do
-    echo "line_item is $line_item"
+#    echo "line_item is $line_item"
 
     if [[ -f "$line_item" ]]; then
-#      echo "gonna rm $line_item"
-      rm "$line_item"
+      killfile $line_item
     elif [[ -d "$line_item" ]]; then
-#      echo "gonna rm -rf $line_item"
-      rm -rf "$line_item"
+      killdir $line_item
     else
       echo "Unknown thing to sluggerate: $line"
     fi
