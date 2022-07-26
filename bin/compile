@@ -12,9 +12,6 @@ ENV_DIR=$3
 BIN_DIR=$(cd $(dirname $0); pwd)
 BUILDPACK_DIR=$(dirname $BIN_DIR)
 
-
-ruby $BIN_DIR/support/ruby_compile $@
-
 file="Sluggerator"
 
 while read -r line; do
