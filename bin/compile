@@ -28,8 +28,8 @@ echo "Sluggerating with $file"
 
 killfile () {
   if [[ -z "$DRY_RUN" ]]; then
-    echo "REAL: rm -f $1"
-    rm -f $1
+#    echo "REAL: rm -f $1"
+    rm -fv $1
   else
     echo "DRY: rm -f $1"
   fi
@@ -38,7 +38,7 @@ killfile () {
 killdir () {
   if [[ -z "$DRY_RUN" ]]; then
 #    echo "REAL: rm -rf $1"
-    rm -rf $1
+    rm -rfv $1
   else
     echo "DRY: rm -rf $1"
   fi
