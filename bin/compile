@@ -34,7 +34,7 @@ log "Sluggerating with $file"
 killfile () {
   if [[ -z "$DRY_RUN" ]]; then
 #    echo "REAL: rm -f $1"
-    rm -fv $1
+    rm -f $1
   else
     log "DRY: rm -f $1"
   fi
@@ -43,19 +43,19 @@ killfile () {
 killdir () {
   if [[ -z "$DRY_RUN" ]]; then
 #    echo "REAL: rm -rf $1"
-    rm -rfv $1
+    rm -rf $1
   else
     log "DRY: rm -rf $1"
   fi
 }
 
 slugitout () {
-  log "Slugging $1"
+  log "Finding files for $1"
 
   sluggy="$(ls -1d $1 2>/dev/null || echo '')"
 
   if [[ -z "$sluggy" ]]; then
-    log "WARN: No files matching: $1"
+    log "  WARN: No files found!"
     return
   fi
 
@@ -64,14 +64,14 @@ slugitout () {
   echo "$sluggy" > $tf
 
   while read -r line_item; do
-    log "Deleting $line_item"
+    log "  Deleting $line_item"
 
     if [[ -f "$line_item" ]]; then
       killfile $line_item
     elif [[ -d "$line_item" ]]; then
       killdir $line_item
     else
-      log "Unknown thing to sluggerate: $line_item"
+      log "  WARN: No file or directory: $line_item"
     fi
   done < $tf
 }
