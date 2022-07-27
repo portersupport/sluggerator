@@ -9,94 +9,61 @@ BUILD_DIR=$1
 CACHE_DIR=$2
 #ENV_DIR=$3
 
-#BIN_DIR=$(cd $(dirname $0); pwd)
+BIN_DIR=$(cd $(dirname $0); pwd)
 #BUILDPACK_DIR=$(dirname $BIN_DIR)
 
-log () {
-  echo "       $1"
-}
+source "$BIN_DIR/support/bash_functions.sh"
 
 file="$BUILD_DIR/Sluggerator"
+report_file="$BUILD_DIR/Sluggerator.report-only"
 
 if [ ! -f "$file" ]; then
   file="$BUILD_DIR/.slugignore"
 fi
 
 if [ ! -f "$file" ]; then
-  log "I don't know how you got here, but exiting because we can't find a suitable Sluggerator or .slugignore file!"
-  exit 100
+  if [ ! -f "$report_file" ]; then
+    log "I don't know how you got here, but exiting because we can't find a suitable Sluggerator or .slugignore file!"
+    exit 100
+  fi
 fi
 
+if [ -f "$file" ]; then
+  #echo "BUILD_DIR is $BUILD_DIR"
+  log "Sluggerating with $file"
 
-#echo "BUILD_DIR is $BUILD_DIR"
-log "Sluggerating with $file"
+  while read -r line; do
+  #  echo "Trying to sluggerate $line"
 
-killfile () {
-  if [[ -z "$DRY_RUN" ]]; then
-#    echo "REAL: rm -f $1"
-    rm -f $1
-  else
-    log "DRY: rm -f $1"
-  fi
-}
-
-killdir () {
-  if [[ -z "$DRY_RUN" ]]; then
-#    echo "REAL: rm -rf $1"
-    rm -rf $1
-  else
-    log "DRY: rm -rf $1"
-  fi
-}
-
-slugitout () {
-  log "Finding files for $1"
-
-  sluggy="$(ls -1d $1 2>/dev/null || echo '')"
-
-  if [[ -z "$sluggy" ]]; then
-    log "  WARN: No files found!"
-    return
-  fi
-
-  tf="$(mktemp)"
-
-  echo "$sluggy" > $tf
-
-  while read -r line_item; do
-    log "  Deleting $line_item"
-
-    if [[ -f "$line_item" ]]; then
-      killfile $line_item
-    elif [[ -d "$line_item" ]]; then
-      killdir $line_item
-    else
-      log "  WARN: No file or directory: $line_item"
+    if [[ $line =~ ^\s*#.*$ ]] || [[ -z "$line" ]]; then
+  #    echo "Skipping $line"
+      continue
     fi
-  done < $tf
-}
 
-while read -r line; do
-#  echo "Trying to sluggerate $line"
+    slugitout "$BUILD_DIR/$line"
 
-  if [[ $line =~ ^\s*#.*$ ]] || [[ -z "$line" ]]; then
-#    echo "Skipping $line"
-    continue
-  fi
+    if [[ ! -z "$CACHE_DIR" ]]; then
+      slugitout "$CACHE_DIR/$line"
+    fi
+  done < $file
+else
+  log "Sluggerator in report-only mode"
+fi
 
-  slugitout "$BUILD_DIR/$line"
+THRESHOLD=""
 
-  if [[ ! -z "$CACHE_DIR" ]]; then
-    slugitout "$CACHE_DIR/$line"
-  fi
-done < $file
+if [ -f "$report_file" ]; then
+  log "Reporting for contents of $report_file"
 
-GEMROOT="$BUILD_DIR/vendor/bundle/ruby/*/gems/"
+  while read -r line; do
+    if [[ -z "$line" ]]; then
+      continue
+    fi
 
-echo "Large Gems:"
-du -sh --threshold=10M $GEMROOT/* | sort -h
-echo "WHERETZ:"
-du -ah --threshold=1M $GEMROOT/wheretz*/data/*
-echo "MINIRACER:"
-du -ah --threshold=1M $GEMROOT/mini_racer*
+    if [[ $line =~ ^\s*#.*$ ]]; then
+      continue
+    fi
 
+    du -sh --threshold=10M $BUILD_DIR/$line | sort -h
+  done < $report_file
+fi

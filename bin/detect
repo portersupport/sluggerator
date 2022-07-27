@@ -21,4 +21,9 @@ if [ -f "$APP_DIR/.slugignore" ]; then
   exit 0
 fi
 
+if [ -f "$APP_DIR/Sluggerator.report-only" ]; then
+  echo "Sluggerator will operate in report-only mode with your Sluggerator.report-only file"
+  exit 0
+fi
+
 exit 100
