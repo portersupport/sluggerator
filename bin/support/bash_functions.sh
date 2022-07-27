@@ -3,7 +3,7 @@ log () {
   echo "       $1"
 }
 
-killfile () {
+slugfile () {
   if [[ -z "$DRY_RUN" ]]; then
 #    echo "REAL: rm -f $1"
     rm -f $1
@@ -12,7 +12,7 @@ killfile () {
   fi
 }
 
-killdir () {
+slugdir () {
   if [[ -z "$DRY_RUN" ]]; then
 #    echo "REAL: rm -rf $1"
     rm -rf $1
@@ -39,9 +39,9 @@ slugitout () {
     log "  Deleting $line_item"
 
     if [[ -f "$line_item" ]]; then
-      killfile $line_item
+      slugfile $line_item
     elif [[ -d "$line_item" ]]; then
-      killdir $line_item
+      slugdir $line_item
     else
       log "  WARN: No file or directory: $line_item"
     fi
