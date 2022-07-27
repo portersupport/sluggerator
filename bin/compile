@@ -42,9 +42,9 @@ if [ -f "$file" ]; then
 
     slugitout "$BUILD_DIR/$line"
 
-    if [[ ! -z "$CACHE_DIR" ]]; then
-      slugitout "$CACHE_DIR/$line"
-    fi
+#    if [[ ! -z "$CACHE_DIR" ]]; then
+#      slugitout "$CACHE_DIR/$line"
+#    fi
   done < $file
 else
   log "Sluggerator in report-only mode"
