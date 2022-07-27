@@ -3,14 +3,11 @@
 set -e
 
 BUILD_DIR=$1
-
-# We get passed these other things, but we don't really need them.
-
 CACHE_DIR=$2
-#ENV_DIR=$3
+ENV_DIR=$3
 
 BIN_DIR=$(cd $(dirname $0); pwd)
-#BUILDPACK_DIR=$(dirname $BIN_DIR)
+BUILDPACK_DIR=$(dirname $BIN_DIR)
 
 source "$BIN_DIR/support/bash_functions.sh"
 
@@ -29,22 +26,14 @@ if [ ! -f "$file" ]; then
 fi
 
 if [ -f "$file" ]; then
-  #echo "BUILD_DIR is $BUILD_DIR"
   log "Sluggerating with $file"
 
   while read -r line; do
-  #  echo "Trying to sluggerate $line"
-
     if [[ $line =~ ^\s*#.*$ ]] || [[ -z "$line" ]]; then
-  #    echo "Skipping $line"
       continue
     fi
 
     slugitout "$BUILD_DIR/$line"
-
-#    if [[ ! -z "$CACHE_DIR" ]]; then
-#      slugitout "$CACHE_DIR/$line"
-#    fi
   done < $file
 else
   log "Sluggerator in report-only mode"
