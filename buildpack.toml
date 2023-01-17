@@ -1,0 +1,11 @@
+api = "0.7"
+
+[buildpack]
+id = "portersupport/sluggerator"
+version = "1.0"
+
+[[stacks]]
+id = "heroku-18"
+
+[[stacks]]
+id = "heroku-20"
